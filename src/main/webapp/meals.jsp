@@ -21,7 +21,32 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
+
+    <form>
+        <table>
+            <thead>
+            <tr>
+                <th>From date</th>
+                <th>To date</th>
+                <th></th>
+                <th>From time</th>
+                <th>To time</th>
+            </tr>
+            </thead>
+            <td><input type="date" value="${fromDate}" name="fromDateParameter"></td>
+            <td><input type="date" value="${toDate}" name="toDateParameter"></td>
+            <td></td>
+            <td><input type="time" value="${fromTime}" name="fromTimeParameter"></td>
+            <td><input type="time" value="${toTime}" name="toTimeParameter"></td>
+        </table>
+        <br>
+        <button type="submit">Filter</button>
+        <button onclick="window.location.href='${pageContext.request.contextPath}/meals'" type="button">Reset</button>
+    </form>
+    <br><br>
+
     <a href="meals?action=create">Add Meal</a>
+
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>

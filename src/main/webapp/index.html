@@ -7,8 +7,18 @@
 <h3>Проект <a href="https://github.com/JavaWebinar/topjava" target="_blank">Java Enterprise (Topjava)</a></h3>
 <hr>
 <ul>
+    <label for="users">Choose a user:</label>
+
+    <form method="get" action="meals">
+        <select name="id" id="users">
+            <option value="1">1</option>
+            <option value="2">2</option>
+        </select>
+        <input type="hidden" name="action" value="setUser"/>
+        <button type="submit">Select</button>
+    </form>
+    <br><br>
     <li><a href="users">Users</a></li>
-    <li><a href="meals">Meals</a></li>
 </ul>
 </body>
 </html>
