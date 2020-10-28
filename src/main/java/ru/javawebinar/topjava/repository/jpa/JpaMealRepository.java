@@ -29,7 +29,7 @@ public class JpaMealRepository implements MealRepository {
             em.persist(meal);
             return meal;
         } else {
-            int rawChanged = em.createNamedQuery(Meal.UPDATE)
+            int rowChanged = em.createNamedQuery(Meal.UPDATE)
                     .setParameter("dateTime", meal.getDateTime())
                     .setParameter("description", meal.getDescription())
                     .setParameter("calories", meal.getCalories())
@@ -37,7 +37,7 @@ public class JpaMealRepository implements MealRepository {
                     .setParameter("userId", userId)
                     .executeUpdate();
 
-            return rawChanged == 0 ? null : meal;
+            return rowChanged == 0 ? null : meal;
         }
     }
 
