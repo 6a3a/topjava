@@ -9,6 +9,8 @@ import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
@@ -17,6 +19,7 @@ import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
 import ru.javawebinar.topjava.ActiveDbProfileResolver;
 import ru.javawebinar.topjava.model.Meal;
+import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
@@ -26,8 +29,10 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.Assert.assertThrows;
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
 import static ru.javawebinar.topjava.UserTestData.USER_ID;
+import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;
+import static ru.javawebinar.topjava.UserTestData.user;
+import static ru.javawebinar.topjava.UserTestData.USER_MATCHER;
 
 @ContextConfiguration({
         "classpath:spring/spring-app.xml",
@@ -143,5 +148,23 @@ public abstract class MealServiceTest {
     @Test
     public void getBetweenWithNullDates() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
+    }
+
+    @Autowired
+    Environment environment;
+
+    @Test
+    public void getWithUser() {
+        if (environment.acceptsProfiles(Profiles.of("datajpa"))) {
+            Meal actual = service.getWithUser(MEAL1_ID, USER_ID);
+            Meal expected = new Meal(MEAL1_ID, meal1.getDateTime(), meal1.getDescription(), meal1.getCalories());
+            expected.setUser(user);
+            User actualUser = actual.getUser();
+            MEAL_MATCHER.assertMatch(actual, expected);
+            USER_MATCHER.assertMatch(actualUser, expected.getUser());
+
+        } else {
+            Assert.assertThrows(UnsupportedOperationException.class, () -> service.getWithUser(MEAL1_ID, USER_ID));
+        }
     }
 }

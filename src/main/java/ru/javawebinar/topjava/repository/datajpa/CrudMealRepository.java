@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +27,7 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
             @Param("endDateTime")LocalDateTime endDateTime,
             @Param("userId") int userId);
 
+    @Query("SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:userId")
+    @EntityGraph(type = EntityGraph.EntityGraphType.FETCH, value = Meal.GRAPH)
+    Meal getWithUser(@Param("id") int id, @Param("userId") int userId);
 }

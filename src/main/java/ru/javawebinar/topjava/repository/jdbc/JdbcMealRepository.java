@@ -81,6 +81,10 @@ public abstract class JdbcMealRepository {
                 ROW_MAPPER, userId, startDateTime, endDateTime);
     }
 
+    public Meal getWithUser(int id, int userId) {
+        throw new UnsupportedOperationException("Works only with DataJpa");
+    }
+
     @Profile(Profiles.POSTGRES_DB)
     @Repository
     public static class PostgresJdbcMealRepository extends JdbcMealRepository implements MealRepository {
