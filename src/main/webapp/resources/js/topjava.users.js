@@ -39,7 +39,10 @@ $(function () {
                     "asc"
                 ]
             ]
-        })
+        }),
+        updateTable: function () {
+            $.get("admin/users/", updateTableByData);
+        }
     };
     makeEditable();
 });

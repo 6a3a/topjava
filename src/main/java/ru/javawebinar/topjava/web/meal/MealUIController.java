@@ -14,7 +14,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("ui/meals")
+@RequestMapping("/profile/meals")
 public class MealUIController extends AbstractMealController {
 
     @Override
