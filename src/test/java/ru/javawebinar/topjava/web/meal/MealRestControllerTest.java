@@ -81,6 +81,17 @@ class MealRestControllerTest extends AbstractControllerTest {
         MEAL_MATCHER.assertMatch(mealService.get(MEAL1_ID, USER_ID), updated);
     }
 
+
+    @Test
+    void updateInvalid() throws Exception {
+        Meal invalid = new Meal(MEAL1_ID, null, null, 10000);
+        perform(MockMvcRequestBuilders.put(REST_URL + MEAL1_ID).contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(invalid))
+                .with(userHttpBasic(user)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
     @Test
     void createWithLocation() throws Exception {
         Meal newMeal = getNew();

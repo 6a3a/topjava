@@ -7,10 +7,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import ru.javawebinar.topjava.util.ValidationUtil;
 import ru.javawebinar.topjava.util.exception.ErrorInfo;
@@ -40,6 +39,14 @@ public class ExceptionInfoHandler {
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST) //400
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    @Order(Ordered.HIGHEST_PRECEDENCE + 2)
+    public ErrorInfo validationError(HttpServletRequest req, MethodArgumentNotValidException e) {
+        return logAndGetValidationError(req, e.getBindingResult());
+    }
+
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
@@ -61,5 +68,13 @@ public class ExceptionInfoHandler {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
         return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
+    }
+
+    private ErrorInfo logAndGetValidationError(HttpServletRequest req, BindingResult result) {
+        String[] details = result.getFieldErrors().stream()
+                .map(fe -> fe.getField() + ' ' + fe.getDefaultMessage()).toArray(String[]::new);
+        log.warn("Validation exception at request");
+
+        return new ErrorInfo(req.getRequestURL(), VALIDATION_ERROR, details);
     }
 }
